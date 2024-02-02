@@ -22,10 +22,22 @@
 
 
 	/*----- cached elements  -----*/
-
+    //An obj that caches our frequently used DOM nodes
+    const elements = {
+        dice: document.getElementById('dice'),
+        points: document.getElementById('points'),
+        //might not be worth caching below as they're used once
+        player1Roll: document.querySelector('.player1 button.roll'),
+        player2Roll: document.querySelector('.player2 button.roll')
+    };
 
 	/*----- event listeners -----*/
+    elements.player1Roll.addEventListener('click', function(){
+        rollPair();
 
+    });
+    
+    
 
 	/*----- functions -----*/
     const init = function () {
@@ -33,8 +45,28 @@
         state.totalPoints.player1 = 0;
         state.totalPoints.player2 = 0;
         state.points = 0;
-        state.rolls.length = 0; //never use this in real life
+        //state.rolls.length = 0; //never use this in real life
+        state.rolls = [rollDie(), rollDie()];
+        render();
+    };
+
+    //a function is just a thing inside a variable
+    const render = function () {
+        //this function will update a state for us
+        elements.dice.innerHTML = SIDES[ state.rolls[0] ] + ' ' + SIDES[ state.rolls[1] ];
+        elements.points.innerText = state.points;
+    }
+
+    const rollDie = function () {
+        //round up to an integer between 1 - 6 inclusive
+        return Math.ceil(Math.random() * 6);
+    };
+
+    const rollPair = function () {
+        state.rolls = [rollDie(), rollDie()]; //The actual dice rolls, ready to render
+        state.points = state.points + (state.rolls[0] + state.rolls[1]);
+        //TODO: should we check for making bacon here?
+        render();
     };
 
     init();
-    console.log(state);
